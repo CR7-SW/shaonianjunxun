@@ -1,0 +1,1334 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="asap-workspace-data-refresh" content="event-v1">
+<meta name="theme-color" content="#0d0a05">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="少年军勋">
+<meta name="mobile-web-app-capable" content="yes">
+<title>少年军勋成长APP</title>
+<style>
+:root{
+  --bg:#0d0a05; --panel:#241c12; --panel2:#2e2416; --line:#4a3a22;
+  --gold:#d4af37; --gold-hi:#f5d97a; --gold-dk:#8a6d1f;
+  --silver:#c0c6d4; --bronze:#b0793a; --red:#a03028; --txt:#e8dcc0; --dim:#9a8a68;
+  --ok:#6cc268; --pop:cubic-bezier(.2,.9,.3,1.15);
+  --card1:#332816; --card2:#2e2416; --card3:#241c12;
+  --btn1:#5c4a26; --btn2:#3a2d1a; --btn3:#2b2113;
+  --edge:#7a6230; --edge2:#55431f; --line2:#4a3a22; --edgehi:#6b5210;
+  --shk:0,0,0; --glow:212,175,55; --tophi:rgba(245,217,122,.22);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:
+    radial-gradient(900px 500px at 15% -8%, rgba(var(--glow),.10) 0%, transparent 60%),
+    radial-gradient(800px 520px at 88% 4%, rgba(84,75,140,.16) 0%, transparent 62%),
+    radial-gradient(1200px 600px at 50% -10%,#2a2013 0%,var(--bg) 60%);
+  background-attachment:fixed;
+  color:var(--txt);
+  font-family:"Noto Serif SC","Songti SC","SimSun",serif;min-height:100vh;padding-bottom:80px;position:relative}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(var(--glow),.045) 1px,transparent 1px),linear-gradient(90deg,rgba(var(--glow),.045) 1px,transparent 1px);
+  background-size:80px 80px}
+/* 3D 颗粒噪点层 */
+#grain{position:fixed;inset:0;pointer-events:none;z-index:30;opacity:.16;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+.wrap{max-width:1080px;margin:0 auto;padding:12px;position:relative;z-index:1}
+/* ---------- 主题切换栏 ---------- */
+.themebar{display:flex;gap:8px;flex-wrap:wrap;margin:4px 0 10px;align-items:center}
+.themebar .tl{font-size:12px;color:var(--dim);letter-spacing:2px;margin-right:2px}
+.theme-btn{position:relative;background:linear-gradient(180deg,var(--btn1) 0%,var(--btn2) 55%,var(--btn3) 100%);
+  border:1px solid var(--edge2);border-top-color:var(--edge);color:var(--dim);
+  padding:6px 13px;border-radius:999px;font-size:13px;letter-spacing:1px;
+  box-shadow:0 4px 9px rgba(var(--shk),.5),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.45);
+  transition:transform .22s var(--pop),box-shadow .22s,color .22s}
+.theme-btn:hover{transform:translateY(-2px);color:var(--txt)}
+.theme-btn:active{transform:translateY(1px)}
+.theme-btn.on{color:var(--gold-hi);border-color:var(--gold);
+  box-shadow:0 4px 10px rgba(var(--shk),.5),0 0 12px rgba(var(--glow),.4),inset 0 1px 0 var(--tophi)}
+/* ---------- 头部 ---------- */
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:14px 4px 6px}
+.crest{width:56px;height:56px;flex:none;filter:drop-shadow(0 6px 14px rgba(var(--shk),.7)) drop-shadow(0 0 16px rgba(var(--glow),.35))}
+h1{font-size:24px;letter-spacing:5px;color:var(--gold-hi);
+  text-shadow:0 1px 0 rgba(var(--shk),.6),0 2px 0 rgba(var(--shk),.5),0 3px 0 rgba(var(--shk),.4),0 6px 14px rgba(var(--shk),.7),0 0 22px rgba(var(--glow),.4)}
+.sub{font-size:12px;color:var(--dim);letter-spacing:3px}
+.kid-switch{margin-left:auto;display:flex;gap:10px}
+.kid-btn{position:relative;background:linear-gradient(180deg,var(--btn1) 0%,var(--btn2) 55%,var(--btn3) 100%);
+  border:1px solid var(--edge2);border-top-color:var(--edge);color:var(--dim);
+  padding:9px 20px;border-radius:10px;font-size:15px;letter-spacing:2px;
+  box-shadow:0 5px 12px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.45);
+  transition:transform .22s var(--pop),box-shadow .22s ease,color .22s ease}
+.kid-btn:hover{transform:translateY(-3px);box-shadow:0 9px 18px rgba(var(--shk),.6),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.45);color:var(--txt)}
+.kid-btn:active{transform:translateY(1px);box-shadow:0 2px 6px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi)}
+.kid-btn.on{border-color:var(--gold);color:var(--gold-hi);
+  box-shadow:0 6px 16px rgba(var(--shk),.6),0 0 16px rgba(var(--glow),.4),inset 0 1px 0 var(--tophi),inset 0 0 14px rgba(var(--glow),.18)}
+/* ---------- 导航 ---------- */
+nav{display:flex;gap:6px;margin:12px 0;border-bottom:2px solid var(--line2);flex-wrap:wrap}
+nav button{background:none;border:none;color:var(--dim);font-size:15px;letter-spacing:3px;padding:10px 14px;
+  border-bottom:3px solid transparent;transition:color .2s,text-shadow .2s}
+nav button:hover{color:var(--txt)}
+nav button.on{color:var(--gold-hi);border-bottom-color:var(--gold);text-shadow:0 0 12px rgba(var(--glow),.5)}
+/* ---------- 面板（3D 凸起卡） ---------- */
+.panel{position:relative;
+  background:linear-gradient(180deg,var(--card1) 0%,var(--card2) 30%,var(--card3) 100%);
+  border:1px solid var(--edge2);border-top-color:var(--edge);
+  border-radius:14px;padding:18px;margin-bottom:18px;
+  box-shadow:0 18px 40px rgba(var(--shk),.6),0 4px 10px rgba(var(--shk),.5),
+    inset 0 1px 0 var(--tophi),inset 0 -1px 0 rgba(var(--shk),.5);
+  transition:transform .25s var(--pop),box-shadow .25s ease}
+.panel:hover{transform:translateY(-4px);
+  box-shadow:0 26px 54px rgba(var(--shk),.65),0 6px 14px rgba(var(--shk),.5),
+    inset 0 1px 0 var(--tophi),inset 0 -1px 0 rgba(var(--shk),.5)}
+.panel::before{content:"";position:absolute;top:0;left:8%;right:8%;height:3px;border-radius:0 0 4px 4px;
+  background:linear-gradient(90deg,transparent,rgba(var(--glow),.75),transparent);pointer-events:none}
+.panel h2{font-size:16px;color:var(--gold);letter-spacing:3px;margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.panel h2::before{content:"";width:9px;height:9px;background:radial-gradient(circle at 35% 30%,var(--gold-hi),var(--gold) 60%,var(--gold-dk));
+  transform:rotate(45deg);box-shadow:0 0 8px var(--gold),0 2px 3px rgba(var(--shk),.6)}
+.rivets{position:relative}
+.rivets::after{content:"";position:absolute;inset:5px;border:1px dashed rgba(var(--glow),.16);border-radius:10px;pointer-events:none}
+/* ---------- 任务（3D 立牌） ---------- */
+.task-row{position:relative;display:flex;align-items:center;gap:12px;padding:11px 14px;margin-bottom:9px;
+  border:1px solid var(--line2);border-top-color:var(--edgehi);
+  border-radius:10px;background:linear-gradient(180deg,var(--card1) 0%,var(--card3) 100%);
+  box-shadow:0 6px 14px rgba(var(--shk),.5),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4);
+  transition:transform .22s var(--pop),box-shadow .22s ease,border-color .22s}
+.task-row:hover{transform:translateY(-3px);border-color:var(--gold-dk);
+  box-shadow:0 12px 22px rgba(var(--shk),.55),0 0 12px rgba(var(--glow),.12),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4)}
+.task-row .ic{width:38px;height:38px;flex:none;display:flex;align-items:center;justify-content:center;font-size:20px;
+  border-radius:9px;background:radial-gradient(circle at 40% 28%,var(--card1),rgba(var(--shk),.35));
+  border:1px solid rgba(var(--glow),.18);box-shadow:inset 0 1px 0 var(--tophi),0 3px 6px rgba(var(--shk),.5);
+  filter:grayscale(1) brightness(.55);transition:.25s var(--pop)}
+.task-row.done .ic{filter:none;transform:scale(1.1);
+  box-shadow:inset 0 1px 0 var(--tophi),0 3px 10px rgba(var(--glow),.35)}
+.task-row .nm{flex:1;font-size:15px}
+.task-row.done .nm{color:var(--gold-hi);text-shadow:0 0 10px rgba(var(--glow),.35)}
+.task-row .tg{background:linear-gradient(180deg,var(--btn1) 0%,var(--btn2) 55%,var(--btn3) 100%);
+  border:1px solid var(--gold-dk);border-top-color:var(--gold-dk);color:var(--gold-hi);
+  padding:8px 16px;border-radius:8px;font-size:13px;letter-spacing:1px;
+  box-shadow:0 4px 9px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4);
+  transition:transform .2s var(--pop),box-shadow .2s}
+.task-row .tg:hover{transform:translateY(-2px);box-shadow:0 7px 14px rgba(var(--shk),.6),0 0 10px rgba(var(--glow),.3),inset 0 1px 0 var(--tophi)}
+.task-row .tg:active{transform:translateY(1px);box-shadow:0 2px 4px rgba(var(--shk),.5),inset 0 1px 0 var(--tophi)}
+.task-row.done .tg{border-color:var(--ok);color:var(--ok);
+  box-shadow:0 4px 9px rgba(var(--shk),.5),0 0 8px rgba(108,194,104,.25),inset 0 1px 0 rgba(108,194,104,.25)}
+.task-row .pts{font-size:12px;color:var(--dim)}
+.group-head{display:flex;align-items:baseline;gap:10px;margin:14px 0 8px}
+.group-head b{color:var(--gold-hi);letter-spacing:2px;text-shadow:0 1px 0 rgba(var(--shk),.5),0 0 10px rgba(var(--glow),.3)}
+.group-head span{font-size:12px;color:var(--dim)}
+.group-done{color:var(--ok);font-size:13px;letter-spacing:1px;text-shadow:0 0 8px rgba(108,194,104,.4)}
+/* ---------- 徽章 ---------- */
+.badge-stage{display:flex;align-items:center;justify-content:center;gap:12px;flex-wrap:wrap;padding:22px 6px}
+.bslot{display:flex;flex-direction:column;align-items:center;gap:6px;
+  background:radial-gradient(circle at 50% 30%,rgba(var(--glow),.10),transparent 70%);
+  border:none;border-radius:14px;padding:10px}
+.bslot .bn{font-size:12px;color:var(--dim);letter-spacing:1px}
+.bslot .bq{font-size:11px;color:var(--gold-dk)}
+.bmain svg{filter:drop-shadow(0 8px 16px rgba(var(--shk),.75)) drop-shadow(0 0 22px rgba(var(--glow),.45))}
+.bsub svg{opacity:.92;filter:drop-shadow(0 5px 10px rgba(var(--shk),.7))}
+.bslot{background:none;border:none}
+.bslot:hover svg{transform:translateY(-5px) scale(1.07)}
+.bslot svg{transition:transform .3s var(--pop)}
+.gilded .badge-gild{display:block}
+.badge-gild{display:none}
+.starline{display:flex;align-items:center;gap:14px;justify-content:center;margin-top:6px;flex-wrap:wrap}
+.starnum{font-size:32px;color:var(--gold-hi);
+  text-shadow:0 1px 0 rgba(var(--shk),.5),0 2px 0 rgba(var(--shk),.4),0 5px 12px rgba(var(--shk),.6),0 0 18px rgba(var(--glow),.55)}
+.starnum small{font-size:13px;color:var(--dim);text-shadow:none}
+.next-tier{font-size:13px;color:var(--dim);text-align:center;margin-top:6px}
+.tier-intro{font-size:13px;color:var(--dim);line-height:1.8;margin-top:10px;border-top:1px dashed var(--line2);padding-top:10px}
+/* ---------- 陈列室 ---------- */
+.honor-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px}
+.honor-card{position:relative;border:1px solid var(--edge2);border-top-color:var(--edge);border-radius:12px;padding:14px;text-align:center;
+  background:linear-gradient(180deg,var(--card2) 0%,var(--card3) 100%);
+  box-shadow:0 8px 18px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4);
+  cursor:pointer;transition:transform .25s var(--pop),box-shadow .25s}
+.honor-card:hover{transform:translateY(-5px);
+  box-shadow:0 16px 30px rgba(var(--shk),.6),0 0 14px rgba(var(--glow),.2),inset 0 1px 0 var(--tophi)}
+.honor-card .hic{font-size:34px}
+.honor-card .hn{font-size:13px;color:var(--gold-hi);margin-top:6px}
+.honor-card .hd{font-size:11px;color:var(--dim);margin-top:3px}
+.honor-card.locked{opacity:.45}
+.medal{width:40px;height:40px;border-radius:50%;border:2px solid var(--gold-dk);display:inline-flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 40% 30%,var(--btn1),var(--btn2) 55%,var(--btn3));color:var(--gold-hi);font-size:17px;
+  box-shadow:0 4px 9px rgba(var(--shk),.65),0 0 10px rgba(var(--glow),.3),inset 0 2px 3px var(--tophi),inset 0 -3px 5px rgba(var(--shk),.5)}
+.medal.big-medal{width:96px;height:96px;font-size:44px;border-width:3px;box-shadow:0 10px 22px rgba(var(--shk),.7),0 0 26px rgba(var(--glow),.4),inset 0 3px 5px var(--tophi),inset 0 -5px 8px rgba(var(--shk),.5)}
+.hic.medal{width:52px;height:52px;font-size:22px;margin:0 auto}
+.rank-row .medal{width:46px;height:46px;font-size:20px}
+.rank-row.first .medal{border-color:var(--gold);box-shadow:0 4px 10px rgba(var(--shk),.6),0 0 16px rgba(var(--glow),.55),inset 0 2px 3px var(--tophi)}
+.empty{color:var(--dim);font-size:13px;padding:14px;text-align:center;letter-spacing:1px}
+/* ---------- 排行榜 ---------- */
+.rank-row{position:relative;display:flex;align-items:center;gap:14px;padding:14px;margin-bottom:11px;
+  border:1px solid var(--line2);border-top-color:var(--edgehi);border-radius:11px;
+  background:linear-gradient(180deg,var(--card1) 0%,var(--card3) 100%);
+  box-shadow:0 8px 18px rgba(var(--shk),.5),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4);
+  transition:transform .25s var(--pop),box-shadow .25s}
+.rank-row:hover{transform:translateY(-3px);box-shadow:0 14px 26px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi)}
+.rank-row.first{border-color:var(--gold-dk);
+  box-shadow:0 8px 20px rgba(var(--shk),.55),0 0 16px rgba(var(--glow),.25),inset 0 1px 0 var(--tophi)}
+.rank-row .av{font-size:34px}
+.rank-row .info{flex:1}
+.rank-row .rn{font-size:16px;color:var(--gold-hi);letter-spacing:2px}
+.rank-row .rs{font-size:13px;color:var(--dim);margin-top:4px}
+.rank-row .bmini{display:flex;gap:4px;align-items:center}
+.vs{ text-align:center;color:var(--gold-dk);letter-spacing:4px;font-size:13px;margin:4px 0}
+/* ---------- 家长后台 ---------- */
+.money-box{display:flex;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.money-cell{flex:1;min-width:140px;border:1px solid var(--edge2);border-top-color:var(--edge);border-radius:11px;padding:14px;text-align:center;
+  background:linear-gradient(180deg,var(--card2) 0%,var(--card3) 100%);
+  box-shadow:0 8px 16px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4);
+  transition:transform .25s var(--pop),box-shadow .25s}
+.money-cell:hover{transform:translateY(-4px);box-shadow:0 14px 26px rgba(var(--shk),.6),0 0 12px rgba(var(--glow),.18),inset 0 1px 0 var(--tophi)}
+.money-cell .mv{font-size:26px;color:var(--gold-hi);text-shadow:0 1px 0 rgba(var(--shk),.5),0 0 12px rgba(var(--glow),.4)}
+.money-cell .ml{font-size:12px;color:var(--dim);margin-top:4px}
+.fr{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+.fr input,.fr select{background:rgba(var(--shk),.35);border:1px solid var(--line2);border-top-color:rgba(var(--shk),.6);color:var(--txt);
+  padding:9px 11px;border-radius:8px;font-family:inherit;font-size:14px;
+  box-shadow:inset 0 2px 5px rgba(var(--shk),.6),0 1px 0 var(--tophi)}
+.fr input:focus{outline:1px solid var(--gold);box-shadow:inset 0 2px 5px rgba(var(--shk),.6),0 0 10px rgba(var(--glow),.35)}
+.btn{background:linear-gradient(180deg,var(--btn1) 0%,var(--btn2) 55%,var(--btn3) 100%);
+  border:1px solid var(--gold-dk);border-top-color:var(--gold-dk);color:var(--gold-hi);
+  padding:9px 20px;border-radius:9px;font-size:14px;letter-spacing:2px;
+  box-shadow:0 5px 11px rgba(var(--shk),.55),inset 0 1px 0 var(--tophi),inset 0 -2px 4px rgba(var(--shk),.4);
+  transition:transform .2s var(--pop),box-shadow .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 9px 18px rgba(var(--shk),.6),0 0 12px rgba(var(--glow),.35),inset 0 1px 0 var(--tophi)}
+.btn:active{transform:translateY(1px);box-shadow:0 2px 5px rgba(var(--shk),.5),inset 0 1px 0 var(--tophi)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:0 3px 7px rgba(var(--shk),.5)}
+.btn.warn{border-color:var(--red);color:#e0a0a0}
+.log-list{max-height:260px;overflow:auto;font-size:13px}
+.log-list li{list-style:none;padding:7px 4px;border-bottom:1px dashed rgba(var(--glow),.18);display:flex;gap:8px;flex-wrap:wrap}
+.log-list .lt{color:var(--dim);font-size:12px;min-width:118px}
+.log-list .lp{color:var(--gold-hi);min-width:44px;text-align:right}
+.log-list .lp.neg{color:#c07070}
+/* ---------- 弹窗（3D 弹层） ---------- */
+.overlay{position:fixed;inset:0;background:rgba(6,4,1,.6);backdrop-filter:blur(14px) saturate(1.15);
+  display:none;align-items:center;justify-content:center;z-index:50;padding:16px}
+.overlay.show{display:flex}
+.modal{position:relative;background:linear-gradient(160deg,var(--card1) 0%,var(--card2) 55%,var(--card3) 100%);
+  border:1px solid var(--gold);border-top-color:var(--gold-hi);border-radius:18px;
+  padding:28px;text-align:center;max-width:420px;width:100%;
+  box-shadow:0 30px 70px rgba(var(--shk),.75),0 0 46px rgba(var(--glow),.35),
+    inset 0 1px 0 var(--tophi),inset 0 -2px 6px rgba(var(--shk),.5);
+  animation:pop .42s var(--pop)}
+@keyframes pop{0%{transform:translateY(28px) scale(.92);opacity:0}100%{transform:translateY(0) scale(1);opacity:1}}
+.modal h3{color:var(--gold-hi);letter-spacing:5px;font-size:20px;margin-bottom:10px;
+  text-shadow:0 1px 0 rgba(var(--shk),.5),0 0 14px rgba(var(--glow),.5)}
+.modal .quote{font-size:14px;color:var(--txt);line-height:1.9;margin:12px 0;font-style:italic}
+.modal .qa{font-size:12px;color:var(--dim)}
+.modal .big svg{filter:drop-shadow(0 10px 20px rgba(var(--shk),.7)) drop-shadow(0 0 24px rgba(var(--glow),.6))}
+/* 星星掉落 */
+.starfall{position:fixed;inset:0;pointer-events:none;z-index:60;overflow:hidden}
+.sf{position:absolute;top:-40px;font-size:26px;color:var(--gold-hi);text-shadow:0 0 8px rgba(var(--glow),.7);
+  animation:sfall 1.1s ease-in forwards}
+@keyframes sfall{to{transform:translateY(110vh) rotate(360deg);opacity:.2}}
+/* 保存状态 */
+.savebar{position:fixed;left:0;right:0;bottom:0;background:linear-gradient(180deg,var(--card2),var(--card3));
+  border-top:1px solid var(--line2);box-shadow:0 -6px 16px rgba(var(--shk),.5);
+  padding:9px 14px;font-size:12px;color:var(--dim);text-align:center;z-index:40;letter-spacing:1px}
+.savebar.err{color:#e0a0a0;border-top-color:var(--red)}
+.ro-banner{background:linear-gradient(180deg,#4a1c1c,#331212);border:1px solid var(--red);color:#e0b0b0;
+  padding:10px 14px;border-radius:10px;font-size:13px;margin-bottom:12px;text-align:center;
+  box-shadow:0 6px 14px rgba(var(--shk),.5),inset 0 1px 0 rgba(255,255,255,.08)}
+/* ================= 主题 ================= */
+/* 🚀 星际航行 */
+body.t-space{
+  --bg:#070a18; --card1:#1e2745; --card2:#161d35; --card3:#10152a;
+  --btn1:#2c3866; --btn2:#1d2648; --btn3:#141b33;
+  --edge:#46538f; --edge2:#2e3a68; --line2:#2e3a68; --edgehi:#3d4a85;
+  --gold:#8ED9B8; --gold-hi:#c2f2dc; --gold-dk:#4a8a68;
+  --txt:#dfe6ff; --dim:#8b95bd; --glow:142,217,184; --tophi:rgba(200,220,255,.2);
+  background:
+    radial-gradient(1px 1px at 25px 35px,rgba(255,255,255,.8),transparent),
+    radial-gradient(1px 1px at 120px 90px,rgba(255,255,255,.5),transparent),
+    radial-gradient(1.6px 1.6px at 200px 160px,rgba(180,220,255,.9),transparent),
+    radial-gradient(1px 1px at 262px 58px,rgba(255,255,255,.45),transparent),
+    radial-gradient(1.2px 1.2px at 80px 210px,rgba(194,242,220,.7),transparent),
+    radial-gradient(900px 520px at 15% -8%,rgba(84,75,140,.4) 0%,transparent 60%),
+    radial-gradient(820px 540px at 88% 8%,rgba(142,217,184,.10) 0%,transparent 62%),
+    linear-gradient(180deg,#0b1126 0%,#070a18 70%);
+  background-size:300px 300px,300px 300px,300px 300px,300px 300px,300px 300px,auto,auto,auto;
+  background-attachment:fixed}
+/* 🌊 大海 */
+body.t-sea{
+  --bg:#03141d; --card1:#0e3345; --card2:#0b2836; --card3:#081d28;
+  --btn1:#155266; --btn2:#0e3a4c; --btn3:#0a2a38;
+  --edge:#2a7d96; --edge2:#1c5568; --line2:#1c5568; --edgehi:#23708a;
+  --gold:#45d0e0; --gold-hi:#9df0f8; --gold-dk:#1f7d8c;
+  --txt:#d8f2f6; --dim:#6f9dab; --glow:69,208,224; --tophi:rgba(180,240,250,.2);
+  background:
+    radial-gradient(900px 480px at 50% -12%,rgba(69,208,224,.22) 0%,transparent 58%),
+    radial-gradient(700px 420px at 12% 30%,rgba(20,90,120,.35) 0%,transparent 60%),
+    radial-gradient(760px 460px at 90% 70%,rgba(10,60,90,.45) 0%,transparent 62%),
+    linear-gradient(180deg,rgba(120,220,240,.08) 0%,transparent 30%),
+    linear-gradient(180deg,#062230 0%,#03141d 75%);
+  background-attachment:fixed}
+/* ☀️ 蓝天 */
+body.t-sky{
+  --bg:#d9edff; --card1:#ffffff; --card2:#f6faff; --card3:#e9f3fd;
+  --btn1:#cfe4f8; --btn2:#b9d7f0; --btn3:#a5c8e8;
+  --edge:#8fb8dc; --edge2:#b9d4ea; --line2:#b9d4ea; --edgehi:#9fc4e4;
+  --gold:#1f6fc4; --gold-hi:#155a9e; --gold-dk:#4a90cf;
+  --txt:#1f3a5c; --dim:#5d7fa3; --glow:31,111,196; --tophi:rgba(255,255,255,.9);
+  --shk:31,58,92;
+  background:
+    radial-gradient(700px 380px at 78% 6%,rgba(255,244,200,.85) 0%,transparent 55%),
+    radial-gradient(560px 300px at 18% 18%,rgba(255,255,255,.9) 0%,transparent 60%),
+    radial-gradient(640px 340px at 60% 46%,rgba(255,255,255,.55) 0%,transparent 62%),
+    linear-gradient(180deg,#a8d4f7 0%,#d9edff 45%,#eaf5ff 100%);
+  background-attachment:fixed}
+body.t-sky .overlay{background:rgba(120,160,200,.35)}
+body.t-sky .modal{box-shadow:0 30px 70px rgba(31,58,92,.4),0 0 46px rgba(31,111,196,.2),inset 0 1px 0 rgba(255,255,255,.9)}
+body.t-sky .fr input,body.t-sky .fr select{background:#ffffff;border-top-color:#dfe9f4;box-shadow:inset 0 2px 5px rgba(31,58,92,.12),0 1px 0 rgba(255,255,255,.9)}
+body.t-sky .savebar{box-shadow:0 -6px 16px rgba(31,58,92,.18)}
+/* 🌸 花朵 */
+body.t-flower{
+  --bg:#240a1a; --card1:#43173a; --card2:#371230; --card3:#2a0d24;
+  --btn1:#5e224e; --btn2:#45183a; --btn3:#34102c;
+  --edge:#8a3a72; --edge2:#5e254e; --line2:#5e254e; --edgehi:#7a3266;
+  --gold:#ff9ec4; --gold-hi:#ffd3e5; --gold-dk:#b05580;
+  --txt:#fbe4ee; --dim:#b58aa2; --glow:255,158,196; --tophi:rgba(255,220,235,.22);
+  background:
+    radial-gradient(760px 460px at 20% -6%,rgba(255,158,196,.22) 0%,transparent 58%),
+    radial-gradient(680px 440px at 85% 20%,rgba(150,60,160,.28) 0%,transparent 60%),
+    radial-gradient(620px 420px at 55% 90%,rgba(255,120,170,.12) 0%,transparent 62%),
+    linear-gradient(180deg,#33102a 0%,#240a1a 75%);
+  background-attachment:fixed}
+/* ⛰️ 大山 */
+body.t-mount{
+  --bg:#10160f; --card1:#2a3a24; --card2:#212e1c; --card3:#182213;
+  --btn1:#3c5232; --btn2:#2b3d24; --btn3:#1f2c1a;
+  --edge:#5a7a48; --edge2:#3c5232; --line2:#3c5232; --edgehi:#4d6a3e;
+  --gold:#9ccc72; --gold-hi:#c8e8a8; --gold-dk:#5f8a44;
+  --txt:#e4eeda; --dim:#8ba082; --glow:156,204,114; --tophi:rgba(210,235,190,.2);
+  background:
+    linear-gradient(180deg,transparent 55%,rgba(6,10,5,.75) 100%),
+    radial-gradient(820px 460px at 24% -8%,rgba(156,204,114,.16) 0%,transparent 58%),
+    radial-gradient(720px 440px at 82% 12%,rgba(90,140,70,.22) 0%,transparent 60%),
+    linear-gradient(180deg,#1a2616 0%,#10160f 70%);
+  background-attachment:fixed}
+/* ---------- 头像 ---------- */
+.avatar-box{display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-top:12px;border-top:1px dashed var(--line2);padding-top:12px}
+.avatar-pic{width:64px;height:64px;border-radius:50%;overflow:hidden;flex:none;display:flex;align-items:center;justify-content:center;font-size:30px;
+  border:2px solid var(--gold-dk);background:radial-gradient(circle at 40% 30%,var(--btn1),var(--btn3));
+  box-shadow:0 4px 10px rgba(var(--shk),.6),0 0 12px rgba(var(--glow),.3),inset 0 2px 3px var(--tophi)}
+.avatar-pic .avimg{width:100%;height:100%;object-fit:cover}
+.avatar-btns{display:flex;gap:8px;flex-wrap:wrap}
+.weekbox{margin-top:10px}
+.weekbar{height:10px;border-radius:6px;background:var(--btn3);overflow:hidden;border:1px solid var(--line2)}
+.weekfill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--gold),var(--gold-hi));transition:width .4s}
+.weektxt{font-size:12px;color:var(--dim);margin-top:4px}
+.rankbox{margin-top:12px;padding:12px 14px;border:1px solid var(--gold-dk);border-radius:12px;
+  background:linear-gradient(180deg,rgba(var(--glow),.10),rgba(var(--shk),.18));
+  box-shadow:0 6px 14px rgba(var(--shk),.5),inset 0 1px 0 var(--tophi)}
+.rankmain{display:flex;align-items:center;gap:12px}
+.rankname{font-size:22px;color:var(--gold-hi);letter-spacing:4px;
+  text-shadow:0 0 14px rgba(var(--glow),.5),0 2px 3px rgba(var(--shk),.6)}
+.rankmin{font-size:12px;color:var(--dim);margin-left:auto}
+.kid-btn .avimg{width:22px;height:22px;border-radius:50%;object-fit:cover;vertical-align:-6px;margin-right:6px;border:1px solid rgba(var(--glow),.4)}
+.rank-row .av .avimg{width:100%;height:100%;object-fit:cover}
+@media (max-width:560px){
+  h1{font-size:18px;letter-spacing:2px}
+  .wrap{padding:8px}
+  .panel{padding:13px}
+  nav button{padding:9px 10px;font-size:13px;letter-spacing:1px}
+  .kid-btn{padding:8px 14px;font-size:14px}
+  .theme-btn{padding:5px 10px;font-size:12px}
+}
+/* ---------- 视觉升级 2026-09 ---------- */
+/* 导航：胶囊分段 + 发光滑块感 */
+nav{gap:8px;border-bottom:none;margin:14px 0 16px;padding:5px;
+  background:linear-gradient(180deg,rgba(var(--shk),.28),rgba(var(--shk),.12));
+  border:1px solid var(--edge2);border-radius:999px;
+  box-shadow:inset 0 2px 6px rgba(var(--shk),.5),0 6px 14px rgba(var(--shk),.35)}
+nav button{position:relative;border-bottom:none;border-radius:999px;padding:9px 18px;font-size:14px;
+  transition:color .25s,background .25s,box-shadow .25s,transform .2s var(--pop)}
+nav button:hover{color:var(--txt);transform:translateY(-1px)}
+nav button.on{color:var(--gold-hi);
+  background:linear-gradient(180deg,rgba(var(--glow),.22),rgba(var(--glow),.08));
+  border:1px solid var(--gold-dk);
+  box-shadow:0 0 14px rgba(var(--glow),.35),inset 0 1px 0 var(--tophi)}
+/* 面板：更圆润 + 角落饰件 */
+.panel{border-radius:18px;padding:20px}
+.panel::after{content:"";position:absolute;bottom:0;left:8%;right:8%;height:2px;border-radius:4px 4px 0 0;
+  background:linear-gradient(90deg,transparent,rgba(var(--glow),.28),transparent);pointer-events:none}
+.panel h2{font-size:17px;letter-spacing:4px;margin-bottom:14px}
+/* 任务行：完成打勾光效 */
+.task-row{border-radius:12px;padding:12px 15px}
+.task-row.done{border-color:rgba(108,194,104,.45);
+  background:linear-gradient(180deg,rgba(108,194,104,.07),var(--card3))}
+.task-row .nm{font-size:15.5px;transition:.25s}
+.task-row.done .nm{position:relative}
+.task-row.done .nm::after{content:"✓";position:absolute;left:-20px;top:50%;transform:translateY(-50%);
+  color:var(--ok);font-weight:bold;text-shadow:0 0 8px rgba(108,194,104,.6);animation:popin .35s var(--pop)}
+@keyframes popin{0%{transform:translateY(-50%) scale(0);opacity:0}70%{transform:translateY(-50%) scale(1.35)}100%{transform:translateY(-50%) scale(1);opacity:1}}
+/* 星星闪烁 */
+.starnum svg{animation:twinkle 2.6s ease-in-out infinite}
+.starnum svg:nth-child(2n){animation-delay:.5s}
+.starnum svg:nth-child(3n){animation-delay:1.1s}
+@keyframes twinkle{0%,100%{transform:scale(1);filter:drop-shadow(0 0 2px rgba(var(--glow),.3))}50%{transform:scale(1.12);filter:drop-shadow(0 0 8px rgba(var(--glow),.65))}}
+/* 徽章悬浮 */
+.badge-stage svg,.badge-stage .bslot{animation:hover-float 3.4s ease-in-out infinite}
+@keyframes hover-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+/* 全勤进度条流光 */
+.weekfill{position:relative;overflow:hidden}
+.weekfill::after{content:"";position:absolute;top:0;bottom:0;left:-60%;width:45%;
+  background:linear-gradient(105deg,transparent,rgba(255,255,255,.5),transparent);
+  animation:sheen 2.8s ease-in-out infinite}
+@keyframes sheen{0%{left:-60%}55%,100%{left:130%}}
+/* 头像按钮呼吸光 */
+.avatar-pic{animation:hover-float 3.8s ease-in-out infinite}
+/* 保存条 */
+.savebar{border-radius:999px;padding:6px 18px;font-size:13px;letter-spacing:2px;
+  background:linear-gradient(180deg,rgba(var(--glow),.15),rgba(var(--shk),.2));
+  border:1px solid var(--edge2);box-shadow:0 4px 10px rgba(var(--shk),.4),inset 0 1px 0 var(--tophi)}
+/* 滚动条 */
+::-webkit-scrollbar{width:10px}
+::-webkit-scrollbar-track{background:rgba(var(--shk),.25)}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--btn2),var(--btn3));border-radius:6px;border:1px solid var(--edge2)}
+/* 页面标题呼吸 */
+h1{animation:glowtitle 4s ease-in-out infinite}
+@keyframes glowtitle{0%,100%{text-shadow:0 1px 0 rgba(var(--shk),.6),0 3px 0 rgba(var(--shk),.4),0 6px 14px rgba(var(--shk),.7),0 0 18px rgba(var(--glow),.35)}50%{text-shadow:0 1px 0 rgba(var(--shk),.6),0 3px 0 rgba(var(--shk),.4),0 6px 14px rgba(var(--shk),.7),0 0 30px rgba(var(--glow),.6)}}
+/* ---------- 手机端防溢出加固 ---------- */
+html,body{max-width:100%;overflow-x:hidden}
+.wrap,.panel,.task-row,.rank-row,.money-box,.fr,.modal,.honor-grid,.badge-stage,.starline,.themebar,.kid-switch,header,nav{max-width:100%}
+.task-row .nm,.rank-row .info,.rank-row .rn,.rank-row .rs{overflow-wrap:anywhere;word-break:break-word}
+.fr input{max-width:100%}
+.log-list li{overflow-wrap:anywhere}
+img,svg{max-width:100%}
+@media (max-width:420px){
+  .wrap{padding:6px}
+  .panel{padding:10px;border-radius:14px}
+  header{gap:8px;padding:10px 2px 4px}
+  .crest{width:44px;height:44px}
+  h1{font-size:17px;letter-spacing:2px}
+  .sub{font-size:10px;letter-spacing:2px}
+  .kid-switch{gap:6px;margin-left:0;width:100%;flex-wrap:wrap}
+  .kid-btn{padding:7px 12px;font-size:13px;letter-spacing:1px;flex:1 1 auto}
+  .themebar{gap:5px}
+  .theme-btn{padding:4px 9px;font-size:11px;letter-spacing:0}
+  nav{gap:4px;padding:4px;margin:10px 0 12px}
+  nav button{padding:7px 9px;font-size:12px;letter-spacing:1px;flex:1 1 auto;white-space:nowrap}
+  .task-row{gap:8px;padding:9px 10px}
+  .task-row .ic{width:30px;height:30px;font-size:16px}
+  .task-row .nm{font-size:13.5px}
+  .task-row .tg{padding:7px 10px;font-size:12px}
+  .task-row .pts{font-size:11px}
+  .money-cell{min-width:calc(50% - 7px);padding:10px}
+  .money-cell .mv{font-size:20px}
+  .fr input{padding:8px 9px;font-size:13px}
+  .btn{padding:8px 14px;font-size:13px;letter-spacing:1px}
+  .modal{padding:18px;max-width:94vw}
+  .modal h3{font-size:17px;letter-spacing:3px}
+  .honor-grid{grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:9px}
+  .rank-row{gap:9px;padding:10px}
+  .rank-row .av{font-size:26px}
+  .rank-row .rn{font-size:14px;letter-spacing:1px}
+  .rank-row .rs{font-size:11.5px}
+  .starnum{font-size:26px}
+  .savebar{font-size:11px;padding:6px 10px;letter-spacing:0}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="crest" id="crestBox"></div>
+    <div>
+      <h1>少年军勋</h1>
+      <div class="sub">荣耀 · 自律 · 成长</div><div style="font-size:10px;opacity:.55;margin-top:2px">© 2026 少年军勋 · 本作品仅供个人学习使用，未经授权禁止商用、复制、二次分发，商用授权请联系作者</div>
+    </div>
+    <div class="kid-switch" id="kidSwitch"></div>
+  </header>
+
+  <div id="roBanner" class="ro-banner" style="display:none">当前环境未连接数据通道，页面为只读预览，打卡记录暂不生效。</div>
+
+  <div class="themebar" id="themeBar"><span class="tl">主题皮肤</span></div>
+
+  <nav id="nav">
+    <button data-p="home" class="on">任务大厅</button>
+    <button data-p="rank">军衔主页</button>
+    <button data-p="honor">荣誉陈列室</button>
+    <button data-p="board">排行榜</button>
+    <button data-p="parent">家长后台</button>
+  </nav>
+
+  <section id="page-home"></section>
+  <section id="page-rank" style="display:none"></section>
+  <section id="page-honor" style="display:none"></section>
+  <section id="page-board" style="display:none"></section>
+  <section id="page-parent" style="display:none"></section>
+</div>
+
+<div class="overlay" id="overlay"><div class="modal" id="modalBox"></div></div>
+<div class="starfall" id="starfall"></div>
+<div id="grain"></div>
+<div class="savebar" id="savebar">数据就绪</div>
+
+<script src="./少年军勋成长APP.data.js"></script>
+<script>
+/* ================= 少年军勋成长APP ================= */
+var QUOTES=[
+  {q:"宝剑锋从磨砺出，梅花香自苦寒来。",a:"《警世贤文》"},
+  {q:"天行健，君子以自强不息。",a:"《周易》"},
+  {q:"业精于勤，荒于嬉；行成于思，毁于随。",a:"韩愈"},
+  {q:"不积跬步，无以至千里。",a:"荀子"},
+  {q:"少壮不努力，老大徒伤悲。",a:"《长歌行》"},
+  {q:"千磨万击还坚劲，任尔东西南北风。",a:"郑燮"},
+  {q:"路漫漫其修远兮，吾将上下而求索。",a:"屈原"}
+];
+var TIERS=[
+  {key:"sun",name:"太阳主徽章",full:"鎏金太阳大元帅勋章",min:100,desc:"累计100颗星星以上。军团最高统帅，鎏金太阳照耀全军，至高荣耀。"},
+  {key:"earth",name:"地球主徽章",full:"铜雕地球主勋",min:50,desc:"累计50颗星星以上。铜雕地球主勋，守护与坚韧的象征。"},
+  {key:"moon",name:"月亮徽章",full:"银质月牙勋章",min:10,desc:"累计10颗星星以上。银质月牙，夜训不辍者的标记。"},
+  {key:"star",name:"基础星章",full:"小金属星徽",min:1,desc:"获得第1颗星星即授予。一切荣耀的起点。"}
+];
+/* ---------- 军阶系统（士兵→司令，按太阳晋升；1太阳=10颗星，与零花钱无关） ---------- */
+var RANKS=[
+  {name:"列兵",min:0},{name:"士兵",min:1},{name:"上等兵",min:5},{name:"下士",min:15},
+  {name:"中士",min:30},{name:"上士",min:50},{name:"少尉",min:75},{name:"中尉",min:100},
+  {name:"上尉",min:150},{name:"少校",min:200},{name:"中校",min:300},{name:"上校",min:400},
+  {name:"大校",min:550},{name:"少将",min:700},{name:"中将",min:900},{name:"上将",min:1200},
+  {name:"司令",min:1500}
+];
+function rankOf(suns){
+  var curRank=RANKS[0],next=null;
+  for(var i=0;i<RANKS.length;i++){
+    if(suns>=RANKS[i].min)curRank=RANKS[i];
+    else{next=RANKS[i];break;}
+  }
+  return {cur:curRank,next:next};
+}
+var TASKS={
+  m:{label:"早上任务",deadline:"7:40 前全部完成",reward:1,items:["起床如厕","喝水","穿好衣服","吃完早餐","整理好书包"]},
+  e:{label:"下午&晚间任务",deadline:"21:30 前全部完成",reward:1,items:["回家写作业","吃完晚饭","洗澡洗漱","21:30 准时睡觉"]},
+  x1:{label:"额外能力任务",reward:2,items:["每日预习+复习（全科完成）"]},
+  x2:{label:"额外能力任务",reward:2,items:["每日做家务"]}
+};
+var SVG_N=0;
+function svgStar(sz,cls){
+  var id="g"+(++SVG_N);
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 100 100" class="'+(cls||"")+'"><defs>'+
+  '<radialGradient id="'+id+'" cx="50%" cy="35%"><stop offset="0%" stop-color="#ffe9a0"/><stop offset="55%" stop-color="#d4af37"/><stop offset="100%" stop-color="#7a5c14"/></radialGradient></defs>'+
+  '<polygon points="50,4 61,36 96,36 68,57 78,92 50,71 22,92 32,57 4,36 39,36" fill="url(#'+id+')" stroke="#3a2a08" stroke-width="3"/>'+
+  '<polygon points="50,18 57,38 78,38 61,51 67,74 50,60 33,74 39,51 22,38 43,38" fill="none" stroke="rgba(255,255,255,.35)" stroke-width="1.5"/></svg>';
+}
+function svgMoon(sz){
+  var id="m"+(++SVG_N);
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 100 100"><defs>'+
+  '<radialGradient id="'+id+'" cx="40%" cy="30%"><stop offset="0%" stop-color="#ffffff"/><stop offset="45%" stop-color="#dfe5f0"/><stop offset="80%" stop-color="#9aa3b8"/><stop offset="100%" stop-color="#5a6272"/></radialGradient>'+
+  '<mask id="'+id+'k"><rect width="100" height="100" fill="#fff"/><circle cx="68" cy="38" r="34" fill="#000"/></mask>'+
+  '<filter id="'+id+'s" x="-40%" y="-40%" width="180%" height="180%"><feDropShadow dx="0" dy="4" stdDeviation="3.5" flood-color="rgba(0,0,0,.5)"/></filter></defs>'+
+  '<circle cx="46" cy="52" r="40" fill="url(#'+id+')" mask="url(#'+id+'k)" stroke="#2c3040" stroke-width="3" filter="url(#'+id+'s)"/>'+
+  '<path d="M22 30 A34 34 0 0 0 20 62" fill="none" stroke="rgba(255,255,255,.75)" stroke-width="4" stroke-linecap="round"/>'+
+  '<circle cx="34" cy="42" r="4" fill="rgba(255,255,255,.6)"/><circle cx="44" cy="66" r="3" fill="rgba(255,255,255,.45)"/>'+
+  '<circle cx="30" cy="56" r="2.5" fill="rgba(255,255,255,.35)"/></svg>';
+}
+function svgEarth(sz){
+  var id="e"+(++SVG_N);
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 100 100"><defs>'+
+  '<radialGradient id="'+id+'" cx="42%" cy="32%"><stop offset="0%" stop-color="#e8b878"/><stop offset="55%" stop-color="#b0793a"/><stop offset="100%" stop-color="#5c3a14"/></radialGradient></defs>'+
+  '<circle cx="50" cy="50" r="42" fill="url(#'+id+')" stroke="#3a2408" stroke-width="3"/>'+
+  '<ellipse cx="50" cy="50" rx="42" ry="16" fill="none" stroke="rgba(60,36,8,.8)" stroke-width="2.5"/>'+
+  '<ellipse cx="50" cy="50" rx="18" ry="42" fill="none" stroke="rgba(60,36,8,.8)" stroke-width="2.5"/>'+
+  '<line x1="8" y1="50" x2="92" y2="50" stroke="rgba(60,36,8,.8)" stroke-width="2.5"/>'+
+  '<path d="M30 30 q10 8 4 20" fill="none" stroke="rgba(255,235,200,.35)" stroke-width="2"/></svg>';
+}
+function svgSun(sz){
+  var id="s"+(++SVG_N);
+  var rays="";
+  for(var i=0;i<12;i++){var a=i*30*Math.PI/180,x1=50+46*Math.cos(a),y1=50+46*Math.sin(a),x2=50+58*Math.cos(a),y2=50+58*Math.sin(a);
+    rays+='<line x1="'+x1.toFixed(1)+'" y1="'+y1.toFixed(1)+'" x2="'+x2.toFixed(1)+'" y2="'+y2.toFixed(1)+'" stroke="#c8931f" stroke-width="5" stroke-linecap="round"/>';}
+  return '<svg width="'+sz+'" height="'+sz+'" viewBox="0 0 120 120"><defs>'+
+  '<radialGradient id="'+id+'" cx="46%" cy="36%"><stop offset="0%" stop-color="#fff3c0"/><stop offset="50%" stop-color="#f0c040"/><stop offset="100%" stop-color="#9a6d10"/></radialGradient></defs>'+
+  rays+'<circle cx="60" cy="60" r="38" fill="url(#'+id+')" stroke="#5c4008" stroke-width="3.5"/>'+
+  '<circle cx="60" cy="60" r="28" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="1.5"/>'+
+  '<path d="M46 48 l8 8 M74 48 l-8 8 M46 72 l8 -8 M74 72 l-8 -8" stroke="rgba(120,80,10,.6)" stroke-width="2"/></svg>';
+}
+function badgeSVG(kind,sz){
+  if(kind==="sun")return svgSun(sz);
+  if(kind==="earth")return svgEarth(sz);
+  if(kind==="moon")return svgMoon(sz);
+  return svgStar(sz);
+}
+/* ---------- 状态 ---------- */
+var workbenchState=null, workbenchSaving=false, hostDataVersion=0, curPage="home";
+function clone(o){return JSON.parse(JSON.stringify(o));}
+function cur(){for(var i=0;i<workbenchState.children.length;i++)if(workbenchState.children[i].id===workbenchState.activeChild)return workbenchState.children[i];return workbenchState.children[0];}
+function todayStr(d){d=d||new Date();var m=d.getMonth()+1,dd=d.getDate();return d.getFullYear()+"-"+(m<10?"0"+m:m)+"-"+(dd<10?"0"+dd:dd);}
+function dayOf(c,ds){if(!c.days[ds])c.days[ds]={m:false,e:false,x1:false,x2:false};return c.days[ds];}
+function tierOf(s){for(var i=0;i<TIERS.length;i++)if(s>=TIERS[i].min)return TIERS[i];return null;}
+function tierIdx(k){for(var i=0;i<TIERS.length;i++)if(TIERS[i].key===k)return i;return -1;}
+/* 徽章组合：主徽章 + 下级徽章分解 */
+function badgeCombo(total){
+  var main=tierOf(total);
+  if(!main)return[];
+  var out=[{kind:main.key,main:true}];
+  if(main.key==="star")return[{kind:"star",main:true,count:total}];
+  var rem=total-main.min;
+  var lows=TIERS.filter(function(t){return t.min<main.min&&t.key!=="star";});
+  for(var i=0;i<lows.length;i++){
+    var n=Math.floor(rem/lows[i].min);
+    if(n>0){out.push({kind:lows[i].key,count:n});rem-=n*lows[i].min;}
+  }
+  if(rem>0)out.push({kind:"star",count:rem});
+  return out;
+}
+/* ---------- 音效（WebAudio 合成，无外部资源） ---------- */
+var AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}return AC;}
+function tone(f,t0,dur,type,vol){
+  var c=ac();if(!c)return;
+  var o=c.createOscillator(),g=c.createGain();
+  o.type=type||"triangle";o.frequency.value=f;
+  g.gain.setValueAtTime(0.0001,c.currentTime+t0);
+  g.gain.exponentialRampToValueAtTime(vol||0.18,c.currentTime+t0+0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001,c.currentTime+t0+dur);
+  o.connect(g);g.connect(c.destination);
+  o.start(c.currentTime+t0);o.stop(c.currentTime+t0+dur+0.05);
+}
+function sndTask(){tone(880,0,0.12);tone(1320,0.08,0.15);}
+function sndFanfare(){[523,659,784,1047].forEach(function(f,i){tone(f,i*0.14,0.35,"triangle",0.2);});tone(1568,0.6,0.6,"sawtooth",0.08);}
+function sndUnlock(){[660,880,1100].forEach(function(f,i){tone(f,i*0.1,0.25,"sine",0.16);});}
+/* ---------- 星星掉落动画 ---------- */
+function starFall(n){
+  var box=document.getElementById("starfall");
+  for(var i=0;i<(n||8);i++){
+    var s=document.createElement("div");s.className="sf";s.textContent="★";
+    s.style.left=(10+Math.random()*80)+"%";
+    s.style.animationDelay=(Math.random()*0.4)+"s";
+    s.style.fontSize=(18+Math.random()*20)+"px";
+    box.appendChild(s);
+    setTimeout(function(el){return function(){el.remove();};}(s),1700);
+  }
+}
+/* ---------- 弹窗 ---------- */
+function showModal(html){document.getElementById("modalBox").innerHTML=html;document.getElementById("overlay").classList.add("show");}
+function hideModal(){document.getElementById("overlay").classList.remove("show");}
+function showPromotion(tier){
+  sndFanfare();starFall(14);
+  var q=QUOTES[Math.floor(Math.random()*QUOTES.length)];
+  showModal('<h3>★ 段位晋升 ★</h3><div class="big">'+badgeSVG(tier.key,110)+'</div>'+
+    '<div style="color:#f5d97a;letter-spacing:3px;margin-top:8px">'+tier.full+'</div>'+
+    '<div class="quote">“'+q.q+'”</div><div class="qa">—— '+q.a+'</div>'+
+    '<button class="btn" onclick="hideModal()">领受荣耀</button>');
+}
+function showUnlock(title,icon,desc){
+  sndUnlock();starFall(10);
+  showModal('<h3>✦ 解锁特权 ✦</h3><div class="medal big-medal" style="margin:0 auto">'+icon+'</div>'+
+    '<div style="color:#f5d97a;letter-spacing:3px;margin-top:8px">'+title+'</div>'+
+    '<div class="quote">'+desc+'</div><button class="btn" onclick="hideModal()">收入陈列室</button>');
+}
+/* ---------- 持久化（单 binding commit） ---------- */
+function setWriteControls(on){
+  var btns=document.querySelectorAll("#page-parent button.btn");
+  for(var i=0;i<btns.length;i++)btns[i].disabled=!on;
+}
+function applyWorkspaceData(next){
+  workbenchState=clone(next);
+  var t=(cur()&&cur().theme)||next.theme;
+  if(t&&t!==curTheme)applyTheme(t);
+  render();
+  void refreshAvatarImages();
+  setWriteControls(Boolean(window.AsapWorkspaceState)&&!workbenchSaving);
+}
+function showSaveFailure(err){
+  var bar=document.getElementById("savebar");
+  bar.className="savebar err";
+  var code=err&&err.code?err.code:"";
+  if(code==="REVISION_CONFLICT"||code==="WRITE_OUTCOME_UNKNOWN"){
+    bar.textContent="记录冲突：数据已在别处更新，请重新打开本页面后再操作。";
+  }else if(code==="NOT_BOUND"||code==="AMBIGUOUS_TARGET"){
+    bar.style.opacity="1";
+    bar.textContent="记录通道异常，请在苏西文件预览中打开本页面。";
+  }else{
+    bar.style.opacity="1";
+    bar.textContent="记录失败，本次修改未生效，可重试。";
+  }
+}
+async function persistWorkbenchData(nextState){
+  if(workbenchSaving)throw new Error("SAVE_IN_PROGRESS");
+  if(!window.AsapWorkspaceState)throw new Error("NOT_BOUND");
+  var version=hostDataVersion;
+  var previous=clone(workbenchState);
+  workbenchSaving=true;
+  try{
+    applyWorkspaceData(nextState);
+    setWriteControls(false);
+    var saved=await window.AsapWorkspaceState.commit(nextState);
+    if(hostDataVersion===version)applyWorkspaceData(saved.data);
+    var bar=document.getElementById("savebar");bar.className="savebar";bar.textContent="";bar.style.opacity="0";
+    return saved;
+  }catch(error){
+    if(hostDataVersion===version)applyWorkspaceData(previous);
+    showSaveFailure(error);
+    throw error;
+  }finally{
+    workbenchSaving=false;
+    setWriteControls(Boolean(window.AsapWorkspaceState));
+  }
+}
+var saveQueue=Promise.resolve();
+function onUserMutation(makeNextState){
+  if(!window.AsapWorkspaceState)return Promise.resolve(false);
+  saveQueue=saveQueue.then(function(){
+    return persistWorkbenchData(makeNextState(clone(workbenchState)))
+      .then(function(){return true;})
+      .catch(function(){return false;});
+  });
+  return saveQueue;
+}
+window.addEventListener("asap:workspace-data-updated",function(){
+  hostDataVersion+=1;
+  applyWorkspaceData(window.WORKBENCH_DATA);
+});
+window.addEventListener("asap:workspace-state-commit",function(ev){
+  if(ev&&ev.detail&&ev.detail.status==="saving"){
+    var bar=document.getElementById("savebar");bar.className="savebar";bar.style.opacity="1";bar.textContent="记录中…";
+  }
+});
+/* ---------- 业务变更 ---------- */
+function addStars(c,amount,type,note){
+  c.stars+=amount;
+  c.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:type,amount:amount,note:note});
+  if(c.log.length>400)c.log.length=400;
+}
+async function toggleTask(group){
+  var c=cur(),ds=todayStr(),day=dayOf(c,ds);
+  var beforeTier=tierOf(c.stars);
+  var wasGroupDone=day[group];
+  day[group]=!day[group];
+  var newly=!wasGroupDone&&day[group];
+  var cfg=TASKS[group];
+  var certBefore=c.certificates.length;
+  if(newly){
+    addStars(c,cfg.reward,group,cfg.label+"完成");
+    if(group==="m"||group==="e"){
+      if(day.m&&day.e){
+        var sr=calcStreak(c,ds);
+        c.streak=sr.n;
+        var start=sr.start;
+        [3,4,5].forEach(function(lv){
+          if(sr.n>=lv&&!c.streakBonuses[start+"#"+lv]){
+            c.streakBonuses[start+"#"+lv]=ds;
+            addStars(c,lv,"streak","连续达标"+lv+"天奖励");
+          }
+        });
+        checkWeekBonus(c,ds);
+      }
+    }
+  }else if(wasGroupDone&&!day[group]){
+    /* 取消：扣回任务星星，并撤回不再成立的奖励 */
+    addStars(c,-cfg.reward,group,cfg.label+"取消");
+    if(group==="m"||group==="e"){
+      var sr2=calcStreak(c,ds);
+      c.streak=sr2.n;
+      Object.keys(c.streakBonuses).forEach(function(k){
+        if(k.slice(0,3)==="wk#"){
+          var mon=k.slice(3);
+          if(!weekComplete(c,mon)){
+            delete c.streakBonuses[k];
+            addStars(c,-20,"streak","周全勤奖励撤回");
+          }
+        }else{
+          var p=k.split("#"),lv=+p[1];
+          if(!streakStillValid(c,p[0],lv)){
+            delete c.streakBonuses[k];
+            addStars(c,-lv,"streak","连续达标奖励撤回");
+          }
+        }
+      });
+    }
+  }
+  var afterTier=tierOf(c.stars);
+  var certGrew=c.certificates.length>certBefore;
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id),sd=s.days?null:null;
+    sc.days[ds]=day;sc.stars=c.stars;sc.log=c.log;sc.streak=c.streak;sc.streakBonuses=c.streakBonuses;
+    return s;
+  });
+  if(!ok)return;
+  if(newly){
+    sndTask();starFall(6);
+    if(afterTier&&(!beforeTier||tierIdx(afterTier.key)>tierIdx(beforeTier.key))){
+      setTimeout(function(){showPromotion(afterTier);},450);
+    }
+  }
+}
+function childIn(s,id){for(var i=0;i<s.children.length;i++)if(s.children[i].id===id)return s.children[i];}
+function calcStreak(c,ds){
+  var n=0,d=new Date(ds+"T12:00:00"),start=ds;
+  while(true){
+    var wd=d.getDay();
+    if(wd===0||wd===6){d.setDate(d.getDate()-1);continue;}
+    var k=todayStr(d),dd=c.days[k];
+    if(dd&&dd.m&&dd.e){n++;start=k;d.setDate(d.getDate()-1);}else break;
+  }
+  return {n:n,start:start};
+}
+function weekMonday(d){
+  var x=new Date(d),wd=(x.getDay()+6)%7;
+  x.setDate(x.getDate()-wd);
+  return todayStr(x);
+}
+function weekComplete(c,monStr){
+  var d=new Date(monStr+"T12:00:00");
+  for(var i=0;i<5;i++){
+    var k=todayStr(d),dd=c.days[k];
+    if(!(dd&&dd.m&&dd.e))return false;
+    d.setDate(d.getDate()+1);
+  }
+  return true;
+}
+function streakStillValid(c,startK,lv){
+  var d=new Date(startK+"T12:00:00");
+  for(var i=0;i<lv;i++){
+    while(d.getDay()===0||d.getDay()===6)d.setDate(d.getDate()+1);
+    var dd=c.days[todayStr(d)];
+    if(!(dd&&dd.m&&dd.e))return false;
+    d.setDate(d.getDate()+1);
+  }
+  return true;
+}
+function consecutiveWeeks(c){
+  var cm=weekMonday(new Date(todayStr()+"T12:00:00"));
+  var n=0,mon=new Date(cm+"T12:00:00");
+  for(var i=0;i<260;i++){
+    if(weekComplete(c,todayStr(mon))){n++;mon.setDate(mon.getDate()-7);}
+    else break;
+  }
+  return n;
+}
+function weekProgress(c){
+  var mon=weekMonday(new Date(todayStr()+"T12:00:00"));
+  var d=new Date(mon+"T12:00:00"),n=0,td=todayStr();
+  for(var i=0;i<5;i++){
+    var k=todayStr(d);
+    if(k>td)break;
+    var dd=c.days[k];
+    if(dd&&dd.m&&dd.e)n++;
+    d.setDate(d.getDate()+1);
+  }
+  return n;
+}
+function checkWeekBonus(c,ds){
+  var cm=weekMonday(new Date(ds+"T12:00:00"));
+  var n=consecutiveWeeks(c);
+  if(n>=4&&!c.streakBonuses["wk#"+cm]){
+    c.streakBonuses["wk#"+cm]=ds;
+    addStars(c,20,"streak","连续4周全勤奖励");
+  }
+}
+function streakStartDate(c,ds,streak){
+  var d=new Date(ds+"T12:00:00");d.setDate(d.getDate()-(streak-1));return todayStr(d);
+}
+function displayStreak(c){
+  var ds=todayStr(),day=c.days[ds];
+  if(day&&day.m&&day.e)return calcStreak(c,ds).n;
+  var y=new Date(ds+"T12:00:00");y.setDate(y.getDate()-1);
+  var yk=todayStr(y),yd=c.days[yk];
+  if(yd&&yd.m&&yd.e)return calcStreak(c,yk).n;
+  return 0;
+}
+async function switchKid(id){
+  workbenchState.activeChild=id;
+  var t=(cur()&&cur().theme)||workbenchState.theme;
+  if(t&&t!==curTheme)applyTheme(t);
+  render();
+  var ok=await onUserMutation(function(s){s.activeChild=id;return s;});
+  if(!ok){workbenchState.activeChild=id;render();}
+}
+function setPage(p){
+  curPage=p;
+  var tabs=document.querySelectorAll("#nav button");
+  for(var i=0;i<tabs.length;i++)tabs[i].className=tabs[i].getAttribute("data-p")===p?"on":"";
+  var ids=["home","rank","honor","board","parent"];
+  for(var j=0;j<ids.length;j++)document.getElementById("page-"+ids[j]).style.display=ids[j]===p?"":"none";
+  render();
+}
+/* ---------- 渲染 ---------- */
+function render(){
+  if(!workbenchState)return;
+  var c=cur();
+  var sw=document.getElementById("kidSwitch");sw.innerHTML="";
+  workbenchState.children.forEach(function(k){
+    var b=document.createElement("button");
+    b.className="kid-btn"+(k.id===c.id?" on":"");
+    b.innerHTML=(k.avatarImg?'<img class="avimg" data-avpath="'+esc(k.avatarImg)+'" alt="">':"")+esc(k.name);
+    b.onclick=function(){switchKid(k.id);};
+    sw.appendChild(b);
+  });
+  renderHome(c);renderRank(c);renderHonor(c);renderBoard();renderParent(c);
+}
+function esc(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
+function avatarInner(c){
+  var fb=esc(c.avatar||c.name.charAt(c.name.length-1));
+  if(c.avatarImg)return '<img class="avimg" data-avpath="'+esc(c.avatarImg)+'" alt="头像">';
+  if(c.avatarSrc)return '<img class="avimg" src="'+esc(c.avatarSrc)+'" alt="头像" onerror="this.outerHTML=\''+fb+'\'">';
+  return fb;
+}
+function renderHome(c){
+  var ds=todayStr(),day=dayOf(c,ds);
+  var h='<div class="panel rivets"><h2>【'+esc(c.name)+'】今日战报 · '+ds+'</h2>';
+  h+='<div class="starline"><span class="starnum">'+svgStar(28)+' '+c.stars+' <small>颗星星</small></span>'+
+     '<span style="color:var(--dim);font-size:13px">连续达标 <b style="color:var(--gold-hi)">'+displayStreak(c)+'</b> 天</span></div>';
+  ["m","e"].forEach(function(g){
+    var cfg=TASKS[g],allDone=day[g];
+    h+='<div class="group-head"><b>'+cfg.label+'</b><span>'+cfg.deadline+' · 全部完成 +'+cfg.reward+'星</span>'+
+       (allDone?'<span class="group-done">✔ 已点亮 +'+cfg.reward+'星</span>':'')+'</div>';
+    cfg.items.forEach(function(it,idx){
+      var done=allDone;
+      h+='<div class="task-row'+(done?" done":"")+'"><div class="ic">'+svgStar(30)+'</div><div class="nm">'+esc(it)+'</div>'+
+         '<span class="pts">'+(done?"已达成":"未完成")+'</span>'+
+         '<button class="tg" onclick="toggleGroup(\''+g+'\')">'+(done?"取消":"完成整套")+'</button></div>';
+    });
+  });
+  h+='<div class="group-head"><b>额外能力任务</b><span>每项 +2星</span></div>';
+  ["x1","x2"].forEach(function(g){
+    var cfg=TASKS[g],done=day[g];
+    cfg.items.forEach(function(it){
+      h+='<div class="task-row'+(done?" done":"")+'"><div class="ic">'+svgSun(30)+'</div><div class="nm">'+esc(it)+'</div>'+
+         '<span class="pts">+2星</span><button class="tg" onclick="toggleGroup(\''+g+'\')">'+(done?"取消":"完成")+'</button></div>';
+    });
+  });
+  var cmds=c.commands||[];
+  var openCmds=cmds.filter(function(x){return x.status==="open";});
+  var doneToday=cmds.filter(function(x){return x.status==="done"&&x.doneD===ds;});
+  if(openCmds.length||doneToday.length){
+    h+='<div class="group-head"><b>⚔ 家长军令</b><span>完成即得星星</span></div>';
+    openCmds.forEach(function(cm){
+      h+='<div class="task-row"><div class="ic" style="filter:none">⚔️</div><div class="nm">'+esc(cm.label)+
+         '<small style="display:block;color:var(--dim);font-size:12px">'+cm.d+' 颁布</small></div>'+
+         '<span class="pts">+'+cm.stars+'星</span><button class="tg" onclick="toggleCommand(\''+cm.id+'\')">完成</button></div>';
+    });
+    doneToday.forEach(function(cm){
+      h+='<div class="task-row done"><div class="ic">⚔️</div><div class="nm">'+esc(cm.label)+'</div>'+
+         '<span class="pts">+'+cm.stars+'星</span><span class="group-done">✔ 已达成</span></div>';
+    });
+  }
+  h+='<div class="tier-intro">单日星星不设上限；早晚任务都完成记 1 个达标日（周六日不计入也不打断连续），连续达标 3/4/5 天额外奖励 3/4/5 颗星星；连续 4 个星期每周全勤，再额外奖励 20 颗星星。</div></div>';
+  document.getElementById("page-home").innerHTML=h;
+}
+function toggleGroup(g){toggleTask(g);}
+function renderRank(c){
+  var combo=badgeCombo(c.stars),main=tierOf(c.stars);
+  var gild=c.certificates.length>0;
+  var h='<div class="panel rivets'+(gild?" gilded":"")+'"><h2>军衔主页 · '+esc(c.name)+'</h2>';
+  h+='<div class="badge-stage">';
+  combo.forEach(function(b,idx){
+    var tier=TIERS.filter(function(t){return t.key===b.kind;})[0];
+    var sz=b.main?120:56;
+    h+='<button class="bslot '+(b.main?"bmain":"bsub")+'" onclick="zoomBadge(\''+b.kind+'\')" title="点击放大查看">'+
+       badgeSVG(b.kind,sz)+'<span class="bn">'+tier.name+(b.count>1?' ×'+b.count:'')+'</span>'+
+       (b.main?'<span class="bq">'+tier.full+'</span>':'')+'</button>';
+  });
+  if(gild)h+='<div class="badge-gild" style="width:100%;text-align:center;color:var(--gold-hi);font-size:13px;letter-spacing:2px">✦ 鎏金暗纹徽章底板 已激活（奖状荣誉解锁）✦</div>';
+  h+='</div>';
+  h+='<div class="avatar-box"><div class="avatar-pic">'+avatarInner(c)+'</div>'+
+     '<div class="avatar-btns">'+
+     '<button class="btn" onclick="uploadAvatar(\'camera\')">📷 拍照换头像</button>'+
+     '<button class="btn" onclick="uploadAvatar(\'album\')">🖼️ 相册选头像</button>'+
+     (c.avatarImg?'<button class="btn warn" onclick="removeAvatar()">移除头像</button>':'')+
+     '</div></div>';
+  h+='<div class="starline"><span class="starnum">';
+  if(c.stars>=10)h+=svgMoon(60);
+  else if(c.stars>0){for(var si=0;si<c.stars;si++)h+=svgStar(26);}
+  else h+='<span style="color:var(--dim);font-size:14px">还没有星星，完成任务点亮第一颗 ⭐</span>';
+  h+='</span></div>';
+  var wp=weekProgress(c),wn=consecutiveWeeks(c),wkTxt;
+  if(wn>=4)wkTxt="🎉 连续4周全勤大奖已达成！";
+  else if(wn>0)wkTxt="已连续全勤 "+wn+" 周 · 再坚持 "+(4-wn)+" 周拿 20 星大奖";
+  else wkTxt="连续 4 周全勤可拿 20 星大奖，本周是第 1 周";
+  h+='<div class="weekbox"><div class="weekbar"><div class="weekfill" style="width:'+Math.round(wp/5*100)+'%"></div></div>'+
+     '<div class="weektxt">📅 本周全勤 '+wp+'/5 天 · '+wkTxt+'</div></div>';
+  /* 军阶晋升线（按太阳） */
+  var suns=Math.floor(c.stars/10);
+  var rk=rankOf(suns);
+  var rname=(rk.cur.name==="列兵"||rk.cur.name==="司令")?rk.cur.name:((suns-rk.cur.min+1)+"阶"+rk.cur.name);
+  var rkPct=rk.next?Math.round((suns-rk.cur.min)/(rk.next.min-rk.cur.min)*100):100;
+  h+='<div class="rankbox"><div class="rankmain">'+svgSun(52)+'<span class="rankname">'+rname+'</span>'+
+     '<span class="rankmin">已集 '+suns+' 个太阳</span></div>'+
+     '<div class="weekbar" style="margin-top:6px"><div class="weekfill" style="width:'+rkPct+'%"></div></div>'+
+     '<div class="weektxt">'+(rk.next?("🎖 距下一军阶【"+rk.next.name+"】还差 <b style='color:var(--gold-hi)'>"+(rk.next.min-suns)+"</b> 个太阳（"+((rk.next.min-suns)*10)+"颗星）"):"🎖 已达最高军阶【司令】，全军致敬！")+'</div></div>';
+  var next=null;
+  for(var i=TIERS.length-1;i>=0;i--){if(c.stars<TIERS[i].min){next=TIERS[i];}}
+  h+='<div class="next-tier">'+(next?("距下一段位【"+next.name+"】还差 <b style='color:var(--gold-hi)'>"+(next.min-c.stars)+"</b> 颗星星"):"已达最高段位，全军致敬！")+'</div>';
+  if(c.cadre)h+='<div style="text-align:center;margin-top:8px"><span style="display:inline-block;padding:6px 18px;border:1px solid var(--gold);border-radius:20px;color:var(--gold-hi);font-size:13px;letter-spacing:2px">【绶】金属刺绣干部绶带 · 在职干部</span></div>';
+  h+='<div class="tier-intro"><b style="color:var(--gold)">段位介绍</b><br>';
+  TIERS.slice().reverse().forEach(function(t){h+='· '+t.name+'（'+t.min+'颗起）：'+t.desc+'<br>';});
+  h+='<b style="color:var(--gold)">军阶晋升线（1太阳=10颗星，与零花钱无关）</b><br>';
+  RANKS.forEach(function(r,i){
+    var nx=RANKS[i+1];
+    var ic=i<2?svgStar(15):(i<13?svgMoon(15):(i<16?svgEarth(15):svgSun(15)));
+    var range;
+    if(r.name==="列兵")range="0太阳";
+    else if(!nx)range=r.min+"太阳+";
+    else range="一阶~"+(nx.min-r.min)+"阶（"+r.min+"-"+(nx.min-1)+"太阳）";
+    h+='<span style="display:inline-flex;align-items:center;gap:3px;margin:2px 0">'+ic+' '+r.name+'（'+range+'）</span>'+(i<RANKS.length-1?' → ':'');
+  });
+  h+='</div></div>';
+  document.getElementById("page-rank").innerHTML=h;
+}
+function zoomBadge(kind){
+  var tier=TIERS.filter(function(t){return t.key===kind;})[0];
+  sndTask();
+  showModal('<h3>'+tier.name+'</h3><div class="big">'+badgeSVG(kind,150)+'</div>'+
+    '<div class="quote">'+tier.full+'<br>'+tier.desc+'</div><button class="btn" onclick="hideModal()">合上</button>');
+}
+function renderHonor(c){
+  var h='<div class="panel rivets"><h2>荣誉陈列室 · '+esc(c.name)+'</h2>';
+  if(c.certificates.length===0&&!c.cadre){
+    h+='<div class="empty">陈列室尚未开启 —— 获得学校奖状或当选班干部后，高光荣耀将永久陈列于此。</div>';
+  }else{
+    h+='<div class="honor-grid">';
+    if(c.certificates.length>0){
+      h+='<div class="honor-card" onclick="showUnlock(\'鎏金暗纹徽章底板\',\'肤\',\'该孩子账号内所有军衔徽章已永久替换为鎏金浮雕底板，兄妹互相可见。\')">'+
+         '<div class="hic medal">肤</div><div class="hn">鎏金暗纹徽章底板</div><div class="hd">皮肤 · 已激活</div></div>';
+      h+='<div class="honor-card" onclick="showUnlock(\'荣誉陈列室\',\'室\',\'可上传奖状照片生成数字藏品卡片，永久陈列。\')">'+
+         '<div class="hic medal">室</div><div class="hn">荣誉陈列室</div><div class="hd">功能 · 已解锁</div></div>';
+    }
+    if(c.cadre){
+      h+='<div class="honor-card" onclick="showUnlock(\'金属刺绣干部绶带\',\'绶\',\'挂在个人主页军衔徽章侧边，长期生效。\')">'+
+         '<div class="hic medal">绶</div><div class="hn">金属刺绣干部绶带</div><div class="hd">装饰 · 佩戴中</div></div>';
+    }
+    c.certificates.forEach(function(ct,i){
+      h+='<div class="honor-card" onclick="zoomCert('+i+')"><div class="hic medal">状</div><div class="hn">'+esc(ct.name)+'</div><div class="hd">奖状藏品 · '+esc(ct.date)+'<br>+10星已计入军衔</div></div>';
+    });
+    h+='</div>';
+  }
+  h+='</div>';
+  document.getElementById("page-honor").innerHTML=h;
+}
+function zoomCert(i){
+  var c=cur(),ct=c.certificates[i];
+  sndTask();
+  showModal('<h3>📜 荣誉藏品</h3><div class="medal big-medal" style="margin:0 auto">状</div>'+
+    '<div style="color:#f5d97a;letter-spacing:3px;margin:8px 0">'+esc(ct.name)+'</div>'+
+    '<div class="qa">获得日期：'+esc(ct.date)+' · 奖励 +10 星</div>'+
+    '<button class="btn" style="margin-top:12px" onclick="hideModal()">合上</button>');
+}
+function renderBoard(){
+  var kids=workbenchState.children.slice().sort(function(a,b){return b.stars-a.stars;});
+  var h='<div class="panel rivets"><div class="vs">—— 良性竞赛 · 互相见证 ——</div>';
+  kids.forEach(function(k,i){
+    var combo=badgeCombo(k.stars),main=tierOf(k.stars);
+    var mini="";
+    combo.forEach(function(b){mini+=badgeSVG(b.kind,b.main?44:26);});
+    h+='<div class="rank-row'+(i===0?" first":"")+'"><div class="av medal">'+avatarInner(k)+'</div>'+
+       '<div class="info"><div class="rn">'+esc(k.name)+(i===0?' <span style="font-size:12px;color:var(--gold)">暂列第一</span>':'')+'</div>'+
+       '<div class="rs">'+(main?main.name:"尚未授勋")+' · '+svgStar(16)+' '+k.stars+' 星 · 连续达标 '+displayStreak(k)+' 天 · 本周全勤 '+weekProgress(k)+'/5</div></div>'+
+       '<div class="bmini">'+mini+'</div></div>';
+  });
+  h+='</div>';
+  document.getElementById("page-board").innerHTML=h;
+}
+function renderParent(c){
+  var h='<div class="panel rivets"><h2>家长后台 · '+esc(c.name)+'</h2>';
+  var withdrawn=0;c.withdrawals.forEach(function(w){withdrawn+=w.amount;});
+  h+='<div class="money-box">'+
+     '<div class="money-cell"><div class="mv">'+c.stars+'</div><div class="ml">累计星星（后台记账）</div></div>'+
+     '<div class="money-cell"><div class="mv">¥'+c.stars+'</div><div class="ml">累计零花钱（1星=1元）</div></div>'+
+     '<div class="money-cell"><div class="mv">¥'+withdrawn+'</div><div class="ml">已支取</div></div>'+
+     '<div class="money-cell"><div class="mv">¥'+(c.stars-withdrawn)+'</div><div class="ml">可用余额</div></div></div>';
+  h+='<div class="group-head"><b>支取零花钱</b></div>';
+  h+='<div class="fr"><input type="number" id="wdAmt" placeholder="金额（元）" min="1" style="width:110px">'+
+     '<input type="text" id="wdNote" placeholder="用途（如：买玩具）" style="flex:1;min-width:140px">'+
+     '<button class="btn" onclick="addWithdrawal()">记录支取</button></div>';
+  h+='<div class="group-head"><b>校园荣誉登记</b></div>';
+  h+='<div class="fr"><input type="text" id="ctName" placeholder="奖状名称（如：三好学生）" style="flex:1;min-width:160px">'+
+     '<input type="date" id="ctDate" value="'+todayStr()+'" style="width:150px">'+
+     '<button class="btn" onclick="addCert()">登记奖状 +10星</button></div>';
+  h+='<div class="fr"><button class="btn'+(c.cadre?" warn":"")+'" onclick="toggleCadre()">'+(c.cadre?"卸任班干部":"当选班干部")+'</button>'+
+     (c.cadre?'<button class="btn" onclick="payCadreMonth()">发放本月干部奖励 +10星</button>':'')+'</div>';
+  h+='<div class="group-head"><b>颁布军令</b><span>自定义任务+星星，孩子在任务页可见</span></div>';
+  h+='<div class="fr"><input type="text" id="cmLabel" placeholder="命令内容（如：整理玩具房）" style="flex:1;min-width:160px">'+
+     '<input type="number" id="cmStars" placeholder="星星数" min="1" style="width:90px">'+
+     '<button class="btn" onclick="addCommand()">颁布 ⚔</button></div>';
+  h+='<ul class="log-list">';
+  var cmds=c.commands||[];
+  if(cmds.length===0)h+='<li><span class="lt">暂无军令</span></li>';
+  cmds.slice(0,20).forEach(function(cm){
+    h+='<li><span class="lt">'+cm.d+'</span><span style="flex:1">⚔ '+esc(cm.label)+'（+'+cm.stars+'星）</span>'+
+       (cm.status==="open"
+         ?'<button class="btn warn" style="padding:2px 10px;font-size:12px" onclick="revokeCommand(\''+cm.id+'\')">撤令</button>'
+         :'<span class="lp">✔ 已完成</span>')+'</li>';
+  });
+  h+='</ul>';
+  h+='<div class="group-head"><b>星星收支明细</b><span>共 '+c.log.length+' 条</span></div>';
+  h+='<ul class="log-list">';
+  if(c.log.length===0)h+='<li><span class="lt">暂无记录</span></li>';
+  c.log.slice(0,60).forEach(function(l){
+    h+='<li><span class="lt">'+l.d+' '+l.t+'</span><span style="flex:1">'+esc(l.note)+'</span>'+
+       '<span class="lp'+(l.amount<0?" neg":"")+'">'+(l.amount>0?"+":"")+l.amount+'星</span></li>';
+  });
+  h+='</ul>';
+  h+='<div class="tier-intro">支取记录：';
+  if(c.withdrawals.length===0)h+='暂无';
+  c.withdrawals.forEach(function(w){h+='【'+w.d+'】'+esc(w.note||"支取")+' -¥'+w.amount+'　';});
+  h+='</div></div>';
+  document.getElementById("page-parent").innerHTML=h;
+  setWriteControls(Boolean(window.AsapWorkspaceState)&&!workbenchSaving);
+}
+async function addWithdrawal(){
+  var c=cur();
+  var amt=parseInt(document.getElementById("wdAmt").value,10);
+  var note=document.getElementById("wdNote").value.trim();
+  if(!amt||amt<=0){alert("请输入正确的支取金额");return;}
+  if(amt>c.stars-(function(w){var s=0;w.forEach(function(x){s+=x.amount;});return s;})(c.withdrawals)){alert("余额不足");return;}
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    sc.withdrawals.unshift({d:todayStr(),amount:amt,note:note||"零花钱支取"});
+    sc.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:"wd",amount:0,note:"支取零花钱 ¥"+amt+"（不扣星星，仅记账）"});
+    return s;
+  });
+  if(ok){document.getElementById("wdAmt").value="";document.getElementById("wdNote").value="";}
+}
+async function addCert(){
+  var c=cur();
+  var name=document.getElementById("ctName").value.trim();
+  var date=document.getElementById("ctDate").value||todayStr();
+  if(!name){alert("请填写奖状名称");return;}
+  var before=tierOf(c.stars);
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    sc.certificates.push({name:name,date:date});
+    sc.stars+=10;
+    sc.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:"cert",amount:10,note:"获得学校奖状【"+name+"】"});
+    return s;
+  });
+  if(ok){
+    document.getElementById("ctName").value="";
+    var after=tierOf(cur().stars);
+    if(after&&(!before||tierIdx(after.key)>tierIdx(before.key)))setTimeout(function(){showPromotion(after);},450);
+    else showUnlock("荣誉藏品已入列","状","奖状【"+name+"】已生成数字藏品卡片，+10星计入军衔，鎏金底板皮肤已激活。");
+  }
+}
+async function addCommand(){
+  var c=cur();
+  var label=document.getElementById("cmLabel").value.trim();
+  var stars=parseInt(document.getElementById("cmStars").value,10);
+  if(!label){alert("请填写命令内容");return;}
+  if(!stars||stars<=0){alert("请填写正确的星星数");return;}
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    if(!sc.commands)sc.commands=[];
+    sc.commands.unshift({id:"c"+Date.now(),label:label,stars:stars,status:"open",d:todayStr()});
+    sc.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:"cmd",amount:0,note:"家长颁布军令【"+label+"】+"+stars+"星"});
+    return s;
+  });
+  if(ok){document.getElementById("cmLabel").value="";document.getElementById("cmStars").value="";}
+}
+async function revokeCommand(id){
+  var c=cur();
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    if(!sc.commands)sc.commands=[];
+    sc.commands=sc.commands.filter(function(x){return !(x.id===id&&x.status==="open");});
+    return s;
+  });
+  if(ok)renderAll();
+}
+async function toggleCommand(id){
+  var c=cur();
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    if(!sc.commands)sc.commands=[];
+    var cm=sc.commands.filter(function(x){return x.id===id;})[0];
+    if(cm&&cm.status==="open"){
+      cm.status="done";cm.doneD=todayStr();
+      sc.stars+=cm.stars;
+      sc.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:"cmd",amount:cm.stars,note:"完成军令【"+cm.label+"】"});
+    }
+    return s;
+  });
+  if(ok){sndTask();starFall(6);}
+}
+async function toggleCadre(){
+  var c=cur();
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    sc.cadre=!sc.cadre;
+    sc.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:"cadre",amount:0,note:sc.cadre?"当选班干部，解锁干部绶带":"卸任班干部（绶带与历史记录保留）"});
+    return s;
+  });
+  if(ok&&cur().cadre)setTimeout(function(){showUnlock("金属刺绣干部绶带","绶","已挂在个人主页军衔徽章侧边，长期生效。每月可在家长后台领取 +10星干部奖励。");},300);
+}
+async function payCadreMonth(){
+  var c=cur(),m=todayStr().slice(0,7);
+  if(c.cadrePaidMonths.indexOf(m)>=0){alert("本月干部奖励已发放");return;}
+  var before=tierOf(c.stars);
+  var ok=await onUserMutation(function(s){
+    var sc=childIn(s,c.id);
+    sc.cadrePaidMonths.push(m);
+    sc.stars+=10;
+    sc.log.unshift({d:todayStr(),t:new Date().toTimeString().slice(0,5),type:"cadre",amount:10,note:m+" 月班干部奖励"});
+    return s;
+  });
+  if(ok){
+    var after=tierOf(cur().stars);
+    if(after&&(!before||tierIdx(after.key)>tierIdx(before.key)))setTimeout(function(){showPromotion(after);},450);
+    else{sndTask();starFall(8);}
+  }
+}
+/* ---------- 主题皮肤 ---------- */
+var THEMES=[
+  {k:"classic",n:"🎖️ 鎏金荣耀"},
+  {k:"space",n:"🚀 星河漫游"},
+  {k:"sea",n:"🌊 碧海听涛"},
+  {k:"sky",n:"☀️ 晴空万里"},
+  {k:"flower",n:"🌸 繁花似锦"},
+  {k:"mount",n:"⛰️ 青山叠翠"}
+];
+var curTheme="classic";
+function applyTheme(t){
+  var valid=false;
+  for(var i=0;i<THEMES.length;i++)if(THEMES[i].k===t)valid=true;
+  if(!valid)t="classic";
+  curTheme=t;
+  document.body.className=t==="classic"?"":"t-"+t;
+  var btns=document.querySelectorAll("#themeBar .theme-btn");
+  for(var j=0;j<btns.length;j++)btns[j].className="theme-btn"+(btns[j].getAttribute("data-t")===t?" on":"");
+}
+function buildThemeBar(){
+  var bar=document.getElementById("themeBar");
+  THEMES.forEach(function(th){
+    var b=document.createElement("button");
+    b.className="theme-btn";b.setAttribute("data-t",th.k);
+    b.textContent=th.n;
+    b.onclick=function(){switchTheme(th.k);};
+    bar.appendChild(b);
+  });
+}
+async function switchTheme(t){
+  applyTheme(t);
+  var ok=await onUserMutation(function(s){childIn(s,s.activeChild).theme=t;return s;});
+  if(!ok)applyTheme(t);
+}
+/* ---------- 头像上传（宿主文件能力） ---------- */
+async function uploadAvatar(source){
+  var c=cur();
+  var assets=window.AsapWorkspaceAssets;
+  var cap=assets&&assets.detect?assets.detect():null;
+  var avail=source==="camera"?!!(cap&&cap.canUploadCamera):!!(cap&&cap.canUploadAlbum);
+  if(!assets||!assets.file||!avail){alert("当前页面没有文件上传权限，请在苏西文件预览中打开本页面");return;}
+  try{
+    var up=await assets.file.upload({source:source,directory:"头像/"+c.id});
+    var ok=await onUserMutation(function(s){
+      var sc=childIn(s,c.id);sc.avatarImg=up.path;return s;
+    });
+    if(!ok)alert("头像已上传，但记录失败，请重试");
+  }catch(e){
+    if(e&&e.code==="USER_CANCELLED")return;
+    alert("头像上传失败，请重试");
+  }
+}
+async function removeAvatar(){
+  var c=cur();
+  await onUserMutation(function(s){
+    var sc=childIn(s,c.id);sc.avatarImg="";return s;
+  });
+}
+async function refreshAvatarImages(){
+  var assets=window.AsapWorkspaceAssets;
+  if(!assets||!assets.file)return;
+  var imgs=document.querySelectorAll("img[data-avpath]");
+  for(var i=0;i<imgs.length;i++){
+    var el=imgs[i],p=el.getAttribute("data-avpath");
+    if(!p||el.getAttribute("data-avdone")===p)continue;
+    el.setAttribute("data-avdone",p);
+    try{
+      var r=await assets.file.previewImage(p,{variant:"thumbnail"});
+      if(el.getAttribute("data-avdone")===p)el.src=r.src;
+    }catch(e){el.alt="头像暂不可用";}
+  }
+}
+/* ---------- 启动 ---------- */
+document.getElementById("nav").addEventListener("click",function(e){
+  var b=e.target.closest("button");if(b)setPage(b.getAttribute("data-p"));
+});
+document.getElementById("overlay").addEventListener("click",function(e){
+  if(e.target===this)hideModal();
+});
+document.getElementById("crestBox").innerHTML=svgSun(52);
+buildThemeBar();
+if(window.WORKBENCH_DATA){applyTheme(window.WORKBENCH_DATA.theme);applyWorkspaceData(window.WORKBENCH_DATA);}
+/* ---------- 公开版数据层：本机存储 + 家庭云同步（无需服务器账号） ---------- */
+(function(){
+  if(window.AsapWorkspaceState)return; /* 苏西环境走原通道 */
+  var LS_KEY="snjx_data_v1";
+  var CLOUD="https://jsonblob.com/api/jsonBlob";
+  var m=location.hash.match(/fam=([\w-]+)/);
+  var famId=m?m[1]:(localStorage.getItem(LS_KEY+"_fam")||"");
+  var bar=document.getElementById("savebar");
+  var banner=document.getElementById("roBanner");
+  function barMsg(t,err){bar.style.opacity="1";bar.className="savebar"+(err?" err":"");bar.textContent=t;}
+  function localGet(){try{return JSON.parse(localStorage.getItem(LS_KEY));}catch(e){return null;}}
+  function localSet(d){try{localStorage.setItem(LS_KEY,JSON.stringify(d));}catch(e){}}
+  function pushLatest(){
+    if(!famId||!window.WORKBENCH_DATA)return;
+    fetch(CLOUD+"/"+famId,{method:"PUT",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(window.WORKBENCH_DATA)})
+      .then(function(r){if(r.ok){barMsg("");bar.style.opacity="0";}})
+      .catch(function(){setTimeout(pushLatest,10000);});
+  }
+  window.AsapWorkspaceState={
+    cloud:!!famId,famId:famId,
+    commit:function(next){
+      localSet(next);
+      if(!famId)return Promise.resolve({data:next});
+      barMsg("云同步中…");
+      return fetch(CLOUD+"/"+famId,{method:"PUT",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(next)})
+        .then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);barMsg("");bar.style.opacity="0";return{data:next};})
+        .catch(function(){barMsg("云同步失败，已存本机，稍后自动重试",true);setTimeout(pushLatest,8000);return{data:next};});
+    }
+  };
+  window.SNJX_cloud={
+    create:function(){
+      return fetch(CLOUD,{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify(window.WORKBENCH_DATA||{})})
+        .then(function(r){
+          var loc=r.headers.get("Location")||r.headers.get("location");
+          var id=loc?loc.split("/").pop():null;
+          if(!id)throw new Error("NO_ID");
+          famId=id;window.AsapWorkspaceState.famId=id;window.AsapWorkspaceState.cloud=true;
+          localStorage.setItem(LS_KEY+"_fam",id);location.hash="fam="+id;
+          return id;
+        });
+    },
+    pull:function(){
+      if(!famId)return Promise.reject(new Error("NO_FAM"));
+      return fetch(CLOUD+"/"+famId,{headers:{"Accept":"application/json"}}).then(function(r){if(!r.ok)throw new Error("HTTP "+r.status);return r.json();});
+    }
+  };
+  window.SNJX_createCloud=function(){
+    barMsg("正在创建家庭云…");
+    window.SNJX_cloud.create().then(function(){
+      banner.style.display="none";
+      barMsg("家庭云已创建！把带链接的网址发给家人即可同步");
+      if(navigator.clipboard)navigator.clipboard.writeText(location.href).catch(function(){});
+    }).catch(function(){barMsg("创建失败，请检查网络后重试",true);});
+  };
+  /* 启动：优先家庭云，其次本机 */
+  if(famId){
+    barMsg("正在连接家庭云…");
+    window.SNJX_cloud.pull().then(function(d){
+      if(d&&d.children){localSet(d);window.WORKBENCH_DATA=d;hostDataVersion++;applyWorkspaceData(d);barMsg("");bar.style.opacity="0";}
+      else throw new Error("BAD_DATA");
+    }).catch(function(){
+      var l=localGet();
+      if(l&&l.children){window.WORKBENCH_DATA=l;applyWorkspaceData(l);}
+      barMsg("云端暂不可用，已用本机数据，改动稍后自动同步",true);
+      setTimeout(pushLatest,3000);
+    });
+  }else{
+    var l=localGet();
+    if(l&&l.children){window.WORKBENCH_DATA=l;applyWorkspaceData(l);}
+    banner.style.display="";
+    banner.innerHTML='📱 当前为<b>本机模式</b>（数据只存这台设备）。<button class="btn" style="padding:5px 14px;font-size:12px;margin-left:8px" onclick="SNJX_createCloud()">创建家庭云 · 多设备同步</button><div style="margin-top:6px;font-size:12px">创建后把网址发给家人，打开即同一套数据</div>';
+  }
+})();
+if(!window.AsapWorkspaceState){
+  setWriteControls(false);
+}
+</script>
+</body>
+</html>
